@@ -130,6 +130,7 @@ return [
             'driver' => 'openrouter',
             'key' => env('OPENROUTER_API_KEY'),
             'url' => env('OPENROUTER_URL', 'https://openrouter.ai/api/v1'),
+            'model' => 'openai/gpt-4o-mini',
         ],
 
         'voyageai' => [
