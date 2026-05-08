@@ -2,6 +2,7 @@
 
 namespace App\Ai\Agents;
 
+use App\Models\AgentConversationMessage;
 use App\Models\User;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
@@ -74,9 +75,22 @@ class BookFinderAgent implements Agent, Conversational, HasTools
      */
     public function messages(): iterable
     {
-        return [];
-    }
+        if (!$this->conversationId) {
+            return [];
+        }
 
+        return AgentConversationMessage::where('conversation_id', $this->conversationId)
+            ->latest()
+            ->limit(20)
+            ->get()
+            ->reverse()
+            ->map(function ($message) {
+                return new Message(
+                    role: $message->role,
+                    content: $message->content,
+                );
+            });
+    }
     /**
      * Get the tools available to the agent.
      *
