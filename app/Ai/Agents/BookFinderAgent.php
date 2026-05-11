@@ -11,6 +11,7 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Messages\Message;
 use Laravel\Ai\Promptable;
 use Stringable;
+use App\Ai\Tools\SearchBooks;
 
 class BookFinderAgent implements Agent, Conversational, HasTools
 {
@@ -98,6 +99,6 @@ class BookFinderAgent implements Agent, Conversational, HasTools
      */
     public function tools(): iterable
     {
-        return [];
+        return [new SearchBooks()];
     }
 }

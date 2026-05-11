@@ -26,12 +26,12 @@ class SearchBooks implements Tool
         $query = Book::query()->with('category');
 
         if ($author = $request['author'] ?? null) {
-            $query->where('author', 'LIKE' , '%'.$author.'%');
+            $query->where('author', 'LIKE' , "%$author%");
         }
 
         if ($category =  $request['category'] ?? null) {
             $query->whereHas('category', function ($q) use ($category) {
-                $q->where('name', 'LIKE' , '%'.$category.'%');
+                $q->where('name', 'LIKE' , "%$category%");
             });
         }
 
@@ -41,8 +41,8 @@ class SearchBooks implements Tool
 
         if ($q = $request['query'] ?? null) {
             $query->where(function ($sub) use ($q) {
-                $sub->where('title', 'LIKE', '%'.$q.'%')
-                    ->orWhere('author', 'LIKE', '%'.$q.'%');
+                $sub->where('title', 'LIKE', "%$q%")
+                    ->orWhere('author', 'LIKE', "%$q%");
             });
         }
 
@@ -52,7 +52,13 @@ class SearchBooks implements Tool
             return 'No books found matching your criteria.';
         }
 
-        return $books;
+        return $books->map(function ($book) {
+            return sprintf("-%s by %s (%s)  -%s",
+                    $book->title,
+                    $book->author,
+                    $book->category->name,
+                    $book->price);
+        })->implode("\n");
     }
 
     /**
@@ -61,7 +67,11 @@ class SearchBooks implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'value' => $schema->string()->required(),
+            //'value' => $schema->string()->required(),
+            'author' => $schema->string()->nullable(),
+            'category' => $schema->string()->nullable(),
+            'max_price' => $schema->number()->nullable(),
+            'query' => $schema->string()->nullable()->description('Search term  for title or authors'),
         ];
     }
 }
