@@ -22,6 +22,7 @@ class BookController extends Controller
             conversationId: $conversationId,
         )->prompt(
             $queryText,
+            provider: 'gemini', // 'openrouter' 'gemini'
             model: 'openai/gpt-4o-mini'
         );
 

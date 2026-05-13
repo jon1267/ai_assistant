@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 
 
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
+// import AppLayout from '@/layouts/app-layout';
 
 
 interface Message {
@@ -17,7 +17,7 @@ interface Message {
 
 export default function Dashboard() {
     const [isOpen, setIsOpen] = useState(false);
-    const [message, setMessages] = useState<Message[]>([
+    const [messages, setMessages] = useState<Message[]>([
         { role: 'assistant', content: "Hello there! I'm your Book Shop Assistant. How can I assist you today?" },
     ]);
     const [input, setInput] = useState('');
@@ -39,11 +39,14 @@ export default function Dashboard() {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [message]);
+    }, [messages]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!input.trim() || isLoading) return;
+
+        if (!input.trim() || isLoading) {
+            return;
+        }
 
         const userMessage = input.trim();
         setInput('');
@@ -81,7 +84,7 @@ export default function Dashboard() {
     return (
         <>
             <Head title="Dashboard" />
-            <div className="relative flex h-full flex-1 flex-col gap-4 p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 p-4 relative ">
                 {/* Dashboard Widgets */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     {[1, 2, 3].map((i) => (
@@ -103,14 +106,14 @@ export default function Dashboard() {
                 {!isOpen && (
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="fixed bottom-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-0 bg-zinc-900 text-zinc-50 shadow-2xl transition-transform hover:scale-110 dark:bg-zinc-100 dark:text-zinc-950"
+                        className="fixed bottom-8 right-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-0 bg-zinc-900 text-zinc-50 shadow-2xl transition-transform hover:scale-110 dark:bg-zinc-100 dark:text-zinc-950"
                     >
                         <MessageCircle className="h-8 w-8" />
                     </button>
                 )}
 
                 {/* Chatbot Window */}
-                {!isOpen && (
+                {isOpen && (
                     <div className="fixed bottom-8 right-8 w-100 h-150  bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-4  duration-300">
                         {/* Chat Header*/}
                         <div className="p-4 bg-zinc-900 dark:bg-zinc-800 text-white flex justify-between items-center border-b border-zinc-800">
@@ -135,7 +138,7 @@ export default function Dashboard() {
                             ref={scrollRef}
                             className="flex-1 overflow-y-auto p-4 space-y-4 bg:zinc-50 dark:bg-zinc-950/50"
                         >
-                            {message.map((msg, index) => (
+                            {messages.map((msg, index) => (
                                     <div
                                         key={index}
                                         className={`flex items-end gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
@@ -145,13 +148,12 @@ export default function Dashboard() {
                                         </div>
 
                                         <div
-                                            className={`max-w-80% rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.role === 'user' ? 'bg-zinc-900 text-white rounded-br-none' : 'bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-bl-none'}`}
+                                            className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.role === 'user' ? 'bg-zinc-900 text-white rounded-br-none' : 'bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-bl-none'}`}
                                         >
                                             <div
                                                 className="prose prose-sm dark:prose-invert"
                                                 dangerouslySetInnerHTML={{__html: formatMessage(msg.content)}}
                                             >
-
                                             </div>
                                         </div>
 

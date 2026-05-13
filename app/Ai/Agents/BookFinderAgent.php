@@ -90,7 +90,7 @@ class BookFinderAgent implements Agent, Conversational, HasTools
                     role: $message->role,
                     content: $message->content,
                 );
-            });
+            })->all();
     }
     /**
      * Get the tools available to the agent.
